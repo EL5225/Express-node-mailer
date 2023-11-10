@@ -1,0 +1,6 @@
+-- AlterTable
+ALTER TABLE "Profiles" ALTER COLUMN "identityType" DROP NOT NULL,
+ALTER COLUMN "identityNumber" DROP NOT NULL,
+ALTER COLUMN "gender" DROP NOT NULL,
+ALTER COLUMN "religion" DROP NOT NULL,
+ALTER COLUMN "address" DROP NOT NULL;

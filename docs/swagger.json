@@ -1,0 +1,947 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Challenge 5 Binar Academy",
+    "description": "My Challenge 5 Binar Academy | Bank Systems",
+    "contact": {
+      "email": "luthfiramadhan155@gmail.com"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000/api/v1"
+    }
+  ],
+  "tags": [
+    {
+      "name": "auth",
+      "description": "Operations about authentication"
+    },
+    {
+      "name": "users",
+      "description": "Operations about user"
+    },
+    {
+      "name": "profiles",
+      "description": "Operations about profiles"
+    },
+    {
+      "name": "accounts",
+      "description": "Operations about accounts"
+    },
+    {
+      "name": "transactions",
+      "description": "Operations about transactions"
+    }
+  ],
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "tags": ["auth"],
+        "summary": "create new user",
+        "description": "register a new user",
+        "operationId": "post-register-user",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/CreateUser"
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/BasicResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string",
+                              "example": "Luthfi"
+                            },
+                            "email": {
+                              "type": "string",
+                              "example": "l@gmail.com"
+                            },
+                            "createdAt": {
+                              "type": "string",
+                              "format": "date-time",
+                              "example": "2022-01-01T00:00:00.000Z"
+                            },
+                            "Profile": {
+                              "$ref": "#/components/schemas/ProfileModel"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": ["auth"],
+        "summary": "login user",
+        "description": "login user",
+        "operationId": "post-login-user",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/LoginUser"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/BasicResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "properties": {
+                            "user": {
+                              "$ref": "#/components/schemas/UserModel"
+                            }
+                          }
+                        },
+                        "Profile": {
+                          "$ref": "#/components/schemas/ProfileModel"
+                        },
+                        "token": {
+                          "type": "string",
+                          "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/auth/authenticate": {
+      "get": {
+        "tags": ["auth"],
+        "security": [
+          {
+            "token": []
+          }
+        ],
+        "summary": "authenticate user",
+        "description": "authenticate user",
+        "operationId": "get-authenticated-user",
+        "responses": {
+          "200": {
+            "description": "Authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/BasicResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "$ref": "#/components/schemas/UserModel",
+                          "properties": {
+                            "Profile": {
+                              "$ref": "#/components/schemas/ProfileModel"
+                            },
+                            "BankAccount": {
+                              "$ref": "#/components/schemas/BankAccount"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+
+    "/users": {
+      "get": {
+        "tags": ["users"],
+        "summary": "get all users",
+        "description": "get all users",
+        "operationId": "get-all-users",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/BasicResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/UserModel",
+                            "type": "object",
+                            "properties": {
+                              "Profile": {
+                                "$ref": "#/components/schemas/ProfileModel"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/profiles": {
+      "put": {
+        "tags": ["profiles"],
+        "summary": "update profile",
+        "security": [
+          {
+            "token": []
+          }
+        ],
+        "description": "update profile",
+        "operationId": "update-profile",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/UpdateProfile"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/BasicResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/ProfileModel"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+
+    "/accounts": {
+      "post": {
+        "tags": ["accounts"],
+        "summary": "create bank account",
+        "security": [
+          {
+            "token": []
+          }
+        ],
+        "description": "create bank account",
+        "operationId": "create-bank-account",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/CreateBankAccount"
+        },
+        "responses": {
+          "201": {
+            "description": "created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/BasicResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/BankAccount"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "get": {
+        "tags": ["accounts"],
+        "summary": "get all bank accounts",
+        "description": "get all bank accounts",
+        "operationId": "get-all-bank-accounts",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/BasicResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/BankAccountAll"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/transactions": {
+      "post": {
+        "tags": ["transactions"],
+        "summary": "create transaction",
+        "security": [
+          {
+            "token": []
+          }
+        ],
+        "description": "create transaction",
+        "operationId": "create-transaction",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/CreateTransaction"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/BasicResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/Transaction"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["transactions"],
+        "summary": "get all transactions",
+        "description": "get all transactions",
+        "operationId": "get-all-transactions",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/BasicResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer",
+                                "example": 1
+                              },
+                              "sourceAccount": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "integer",
+                                    "example": 1
+                                  },
+                                  "accountNumber": {
+                                    "type": "string",
+                                    "example": "15ce16e7-44ee-476d-b8d0-def01da064d1"
+                                  }
+                                }
+                              },
+                              "destinationAccount": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "integer",
+                                    "example": 1
+                                  },
+                                  "accountNumber": {
+                                    "type": "string",
+                                    "example": "15ce16e7-44ee-476d-b8d0-def01da064d1"
+                                  }
+                                }
+                              },
+                              "amount": {
+                                "type": "number",
+                                "example": 100000
+                              },
+                              "createdAt": {
+                                "type": "string",
+                                "format": "date-time",
+                                "example": "2022-01-01T00:00:00.000Z"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transactions/{transaction}": {
+      "get": {
+        "tags": ["transactions"],
+        "description": "get transaction by id",
+        "operationId": "get-transaction-by-id",
+        "parameters": [
+          {
+            "name": "transaction",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/BasicResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer",
+                              "example": 1
+                            },
+                            "sourceAccount": {
+                              "type": "object",
+                              "properties": {
+                                "name": {
+                                  "type": "string",
+                                  "example": "Luthfi"
+                                },
+                                "accountNumber": {
+                                  "type": "string",
+                                  "example": "15ce16e7-44ee-476d-b8d0-def01da064d1"
+                                }
+                              }
+                            },
+                            "destinationAccount": {
+                              "type": "object",
+                              "properties": {
+                                "name": {
+                                  "type": "string",
+                                  "example": "Luthfi"
+                                },
+                                "accountNumber": {
+                                  "type": "string",
+                                  "example": "15ce16e7-44ee-476d-b8d0-def01da064d1"
+                                }
+                              }
+                            },
+                            "amount": {
+                              "type": "number",
+                              "example": 100000
+                            },
+                            "createdAt": {
+                              "type": "string",
+                              "format": "date-time",
+                              "example": "2022-01-01T00:00:00.000Z"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "BasicResponse": {
+        "title": "BasicResponse",
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "OK!"
+          }
+        }
+      },
+      "UserModel": {
+        "title": "UserModel",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "Luthfi"
+          },
+          "email": {
+            "type": "string",
+            "example": "l@gmail.com"
+          }
+        }
+      },
+      "Pagination": {
+        "title": "Pagination",
+        "type": "object",
+        "properties": {
+          "links": {
+            "type": "object",
+            "properties": {
+              "next": {
+                "type": "string",
+                "example": ""
+              },
+              "prev": {
+                "type": "string",
+                "example": ""
+              }
+            }
+          },
+          "totalItems": {
+            "type": "number"
+          }
+        }
+      },
+      "ProfileModel": {
+        "title": "ProfileModel",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "phoneNumber": {
+            "type": "string",
+            "example": "08123456789"
+          },
+          "identityType": {
+            "type": "string",
+            "example": "KTP"
+          },
+          "identityNumber": {
+            "type": "string",
+            "example": "9546546456"
+          },
+          "religion": {
+            "type": "string",
+            "example": "Islam"
+          },
+          "gender": {
+            "type": "string",
+            "example": "Laki-laki"
+          },
+          "address": {
+            "type": "string",
+            "example": "Jalan Raya"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-01-01T00:00:00.000Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-01-01T00:00:00.000Z"
+          },
+          "userId": {
+            "type": "integer",
+            "example": 1
+          }
+        }
+      },
+      "BankAccount": {
+        "title": "BankAccount",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "accountNumber": {
+            "type": "string",
+            "example": "15ce16e7-44ee-476d-b8d0-def01da064d1"
+          },
+          "name": {
+            "type": "string",
+            "example": "Akun 2"
+          },
+          "balance": {
+            "type": "number",
+            "example": 100000
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-01-01T00:00:00.000Z"
+          },
+          "user": {
+            "type": "integer",
+            "example": 1
+          }
+        }
+      },
+      "BankAccountAll": {
+        "title": "BankAccountAll",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "accountNumber": {
+            "type": "string",
+            "example": "15ce16e7-44ee-476d-b8d0-def01da064d1"
+          },
+          "name": {
+            "type": "string",
+            "example": "Akun 2"
+          },
+          "balance": {
+            "type": "number",
+            "example": 100000
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-01-01T00:00:00.000Z"
+          },
+          "TransactionAsReceiver": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "example": 1
+                },
+                "amount": {
+                  "type": "number",
+                  "example": 100000
+                }
+              }
+            }
+          },
+          "TransactionAsSender": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "example": 1
+                },
+                "amount": {
+                  "type": "number",
+                  "example": 100000
+                }
+              }
+            }
+          },
+          "user": {
+            "$ref": "#/components/schemas/UserModel"
+          }
+        }
+      },
+      "Transaction": {
+        "title": "Transaction",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "sourceAccountNumber": {
+            "type": "string",
+            "example": "15ce16e7-44ee-476d-b8d0-def01da064d1"
+          },
+          "destinationAccountNumber": {
+            "type": "string",
+            "example": "00kg6e7-64fe-mk06-p034-iaj85damk0d1"
+          },
+          "amount": {
+            "type": "number",
+            "example": 100000
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-01-01T00:00:00.000Z"
+          },
+          "sourceAccount": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "example": "Akun 2"
+              }
+            }
+          },
+          "destinationAccount": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "example": "Akun 3"
+              }
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "token": {
+        "type": "apiKey",
+        "name": "Authorization",
+        "in": "header"
+      }
+    },
+    "requestBodies": {
+      "CreateTransaction": {
+        "description": "Create Transaction body example",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "sourceAccountNumber": {
+                  "type": "string",
+                  "example": "15ce16e7-44ee-476d-b8d0-def01da064d1"
+                },
+                "destinationAccountNumber": {
+                  "type": "string",
+                  "example": "00kg6e7-64fe-mk06-p034-iaj85damk0d1"
+                },
+                "amount": {
+                  "type": "number",
+                  "example": 100000
+                }
+              }
+            }
+          }
+        }
+      },
+      "CreateBankAccount": {
+        "description": "Create Bank Account body example",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "example": "Akun 2"
+                },
+                "balance": {
+                  "type": "number",
+                  "example": 100000
+                }
+              }
+            }
+          }
+        }
+      },
+      "UpdateProfile": {
+        "description": "Update Profile body example",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "identityType": {
+                  "type": "string",
+                  "example": "KTP"
+                },
+                "identityNumber": {
+                  "type": "string",
+                  "example": "9546546456"
+                },
+                "religion": {
+                  "type": "string",
+                  "example": "Islam"
+                },
+                "gender": {
+                  "type": "string",
+                  "example": "Laki-laki"
+                },
+                "address": {
+                  "type": "string",
+                  "example": "Jalan Raya"
+                }
+              }
+            }
+          }
+        }
+      },
+      "CreateUser": {
+        "description": "Create User body example",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "example": "Luthfi"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "l@gmail.com"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "luthfi123"
+                },
+                "confirm_password": {
+                  "type": "string",
+                  "example": "luthfi123"
+                },
+                "phoneNumber": {
+                  "type": "string",
+                  "example": "08123456789"
+                }
+              }
+            }
+          }
+        },
+        "required": true
+      },
+      "LoginUser": {
+        "description": "Login body example",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "example": "l@gmail.com"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "test12345"
+                }
+              }
+            }
+          }
+        },
+        "required": true
+      }
+    }
+  }
+}
