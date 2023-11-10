@@ -10,5 +10,3 @@ commands:
 - <code>yarn</code> or <code>yarn install</code> to install all packages
 - <code>yarn migrate</code> to migrate the schemas 
 - <code>yarn dev</code> to run the server
-- <code>yarn test</code> to run testing
-
